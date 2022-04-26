@@ -19,4 +19,4 @@ def fill_file(file_name, file_size_gigabytes = 2, number_bits = 32):
     print('\nDone.')
 
 if __name__ == '__main__':
-    fill_file('data.txt')
+    fill_file('bin_data')

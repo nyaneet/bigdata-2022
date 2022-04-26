@@ -3,9 +3,9 @@ import mmap
 import time
 import os
 
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ProcessPoolExecutor
 
-DATA_FILE_NAME = 'data.txt'
+DATA_FILE_NAME = 'bin_data'
 NUMBER_BITS = 32
 
 def process_data_sequentially():
@@ -48,10 +48,9 @@ def process_data_part(length, offset):
     return part_sum, part_min, part_max
 
 def process_data_concurrency():
-    number_bytes = int(NUMBER_BITS / 8)
     total_bytes = os.path.getsize(DATA_FILE_NAME)
 
-    max_workers = min(32, (os.cpu_count() or 1) + 4)
+    max_workers = os.cpu_count()
     min_part_bytes = mmap.ALLOCATIONGRANULARITY
     total_min_parts = math.ceil(total_bytes / min_part_bytes)
     worker_parts_num = math.ceil(total_min_parts / max_workers)
@@ -72,7 +71,7 @@ def process_data_concurrency():
     total_min = 2**NUMBER_BITS
     total_max = 0    
 
-    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+    with ProcessPoolExecutor(max_workers=max_workers) as executor:
         for result in executor.map(process_data_part, lengths, offsets):
             part_sum, part_min, part_max = result
             total_sum += part_sum
@@ -87,12 +86,11 @@ if __name__ == '__main__':
     # Process data sequentially
     start_time = time.time()
     sum_, min_, max_ = process_data_sequentially()
-    end_time = time.time()
     print('Sequentially')
-    print(f'Elapsed time: {int(end_time - start_time)}s \nSum: {sum_} \nMin: {min_} \nMax: {max_}')
+    print(f'Elapsed time: {int(time.time() - start_time)}s \nSum: {sum_} \nMin: {min_} \nMax: {max_}')
 
     # Sequentially
-    # Elapsed time: 153s 
+    # Elapsed time: 157s 
     # Sum: 1073764728450057022 
     # Min: 5 
     # Max: 4294967295
@@ -100,12 +98,11 @@ if __name__ == '__main__':
     # Process data concurrency
     start_time = time.time()
     sum_, min_, max_ = process_data_concurrency()
-    end_time = time.time()
     print('Concurrency')
-    print(f'Elapsed time: {int(end_time - start_time)}s \nSum: {sum_} \nMin: {min_} \nMax: {max_}')
+    print(f'Elapsed time: {int(time.time() - start_time)}s \nSum: {sum_} \nMin: {min_} \nMax: {max_}')
 
     # Concurrency
-    # Elapsed time: 170s 
+    # Elapsed time: 91s 
     # Sum: 1073764728450057022 
     # Min: 5 
     # Max: 4294967295
