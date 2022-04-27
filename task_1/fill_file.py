@@ -10,7 +10,7 @@ def fill_file(file_name, file_size_gigabytes = 2, number_bits = 32):
 
     with open(file_name, 'wb') as file:
         for i in range(total_numbers):
-            file.write(random.randint(0, 2**8).to_bytes(number_bytes, byteorder='big'))
+            file.write(random.randint(0, 2**number_bits).to_bytes(number_bytes, byteorder='big'))
 
             # for progress
             if (i + 1) % update_every == 0:
