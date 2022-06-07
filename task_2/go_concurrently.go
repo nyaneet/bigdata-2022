@@ -22,14 +22,6 @@ func factor_len(number int) int {
 	return len_factors
 }
 
-func aggregate(results <-chan int) {
-	total_factors := 0
-	for result := range results {
-		total_factors = total_factors + result
-	}
-	fmt.Printf("Factors number: %d\n", total_factors)
-}
-
 func main() {
 	start := time.Now()
 	results := make(chan int)
